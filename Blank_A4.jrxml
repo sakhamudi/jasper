@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="035ce57b-22cb-4b39-a196-2d2951b90f95">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Sample DB"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+SP.spriden_id sp_Id,
+SP.spriden_last_name Last_Name, 
+SP.spriden_first_name First_Name,
+(select distinct SMRPRLE_PROGRAM_DESC from SMRPRLE where SMRPRLE_PROGRAM =so.SOVLCUR_PROGRAM)  prog,
+--sm.SMRPRLE_PROGRAM_DESC prog,
+--SO.SOVLCUR_PROGRAM prog,
+SO.SOVLCUR_LEVL_CODE levl_code,
+SG.sgbstdn_term_code_eff term,
+NVL(ro.RORSAPR_SAPR_CODE_CALC,'NONE') RORSAPR_SAPR_CODE_CALC ,
+( select ROBUSDF_VALUE_1 from robusdf where sp.spriden_pidm= ROBUSDF_PIDM and robusdf_aidy_code=(
+select max(robusdf_aidy_code) from robusdf where sp.spriden_pidm= ROBUSDF_PIDM ) ) field_1,
+sg.sgbstdn_pidm
+FROM 
+Spriden SP,
+sgbstdn sg,
+SOVLCUR SO,
+RORSAPR RO
+WHERE 1=1
+AND Sp.spriden_pidm = RO.RORSAPR_PIDM
+AND  SP.spriden_pidm = SO.SOVLCUR_pidm
+AND sp.spriden_pidm=sg.SGBSTDN_pidm
+and sg.SGBSTDN_term_code_eff=so.sovlcur_term_code
+and sp.spriden_change_ind is null
+and SG.sgbstdn_term_code_eff =201820
+and SGBSTDN_term_code_eff=SOVLCUR_term_code
+AND SG.SGBSTDN_STST_CODE= 'AS'
+AND SO.SOVLCUR_LEVL_CODE IN ('MD','PH')
+AND UPPER(NVL(ro.RORSAPR_SAPR_CODE_CALC,'NONE')) <>'GOOD'
+AND SO.SOVLCUR_SEQNO =(SELECT MAX(SOVLCUR_SEQNO) FROM SOVLCUR 
+WHERE SOVLCUR_PIDM=SO.SOVLCUR_PIDM AND sovlcur_term_code=SO.sovlcur_term_code and SOVLCUR_CACT_CODE='ACTIVE'
+AND SOVLCUR_LEVL_CODE IN ('MD','PH'))
+Order by SP.spriden_id;]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
